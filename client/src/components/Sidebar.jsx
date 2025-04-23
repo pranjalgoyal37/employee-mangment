@@ -1,71 +1,91 @@
-import React from "react";
+import { NavLink } from "react-router-dom";
 import {
   Home,
   Users,
-  ClipboardList,
-  MessageCircle,
-  CalendarCheck,
-  LogOut,
+  ListTodo,
+  MessageSquare,
+  Calendar,
+  Airplay,
   Settings,
+  LogOut,
+  X,
 } from "lucide-react";
-import { Link } from "react-router-dom";
 
-const Sidebar = () => {
+export default function Sidebar({ isOpen, onClose }) {
+  const user = JSON.parse(localStorage.getItem("user"));
+
+  const dashboardPath =
+    user.role == "admin" ? "/admin/dashboard" : "/employee/dashboard";
+
+  const menuItems = [
+    { name: "Dashboard", icon: <Home size={18} />, path: dashboardPath },
+    ...(user.role === "admin"
+      ? [{ name: "Employees", icon: <Users size={18} />, path: "/employees" }]
+      : []),
+    // { name: "Employees", icon: <Users size={18} />, path: "/employees" },
+    { name: "Tasks", icon: <ListTodo size={18} />, path: "/tasks" },
+    { name: "Chat", icon: <MessageSquare size={18} />, path: "/chat" },
+    { name: "Attendance", icon: <Calendar size={18} />, path: "/attendance" },
+    { name: "Leave", icon: <Airplay size={18} />, path: "/leave" },
+    // { name: "Settings", icon: <Settings size={18} />, path: "/settings" },
+  ];
+
+  const logout = () => {
+    localStorage.removeItem("token");
+    localStorage.removeItem("role");
+    window.location.href = "/";
+  };
   return (
-    <div className="w-64 min-h-screen bg-white border-r shadow-sm px-4 py-6">
-      <div className="flex items-center gap-2 mb-10">
-        <div className="bg-blue-600 text-white px-2 py-1 rounded text-lg font-bold">
-          EMS
+    <>
+      {/* Overlay for mobile */}
+      {isOpen && (
+        <div
+          className="fixed inset-0 bg-black bg-opacity-40 z-40 md:hidden"
+          onClick={onClose}
+        />
+      )}
+
+      <aside
+        className={`fixed md:static top-0 left-0 z-50 h-[screen] w-64 bg-white shadow-lg p-4 border-r border-gray-200 transition-transform duration-300
+        ${
+          isOpen ? "translate-x-0" : "-translate-x-full"
+        } md:translate-x-0 md:flex flex-col`}
+      >
+        <div className="flex justify-between items-center mb-6">
+          <div className="text-2xl font-bold text-blue-600">
+            EMS <span className="text-black">Admin</span>
+          </div>
+          <button className="md:hidden" onClick={onClose}>
+            <X />
+          </button>
         </div>
-        <span className="text-xl font-semibold text-gray-800">WorkWise</span>
-      </div>
 
-      <nav className="space-y-2">
-        <Link
-          to="/dashboard"
-          className="flex items-center gap-3 text-sm px-3 py-2 rounded-lg text-white bg-blue-600"
-        >
-          <Home className="w-5 h-5" /> Dashboard
-        </Link>
-        <Link
-          to="/employees"
-          className="flex items-center gap-3 text-sm px-3 py-2 rounded-lg text-gray-700 hover:bg-gray-100"
-        >
-          <Users className="w-5 h-5" /> Employees
-        </Link>
-        <Link
-          to="/tasks"
-          className="flex items-center gap-3 text-sm px-3 py-2 rounded-lg text-gray-700 hover:bg-gray-100"
-        >
-          <ClipboardList className="w-5 h-5" /> Tasks
-        </Link>
-        <Link
-          to="/chat"
-          className="flex items-center gap-3 text-sm px-3 py-2 rounded-lg text-gray-700 hover:bg-gray-100"
-        >
-          <MessageCircle className="w-5 h-5" /> Chat
-        </Link>
-        <Link
-          to="/attendance"
-          className="flex items-center gap-3 text-sm px-3 py-2 rounded-lg text-gray-700 hover:bg-gray-100"
-        >
-          <CalendarCheck className="w-5 h-5" /> Attendance
-        </Link>
-        <Link
-          to="/leave"
-          className="flex items-center gap-3 text-sm px-3 py-2 rounded-lg text-gray-700 hover:bg-gray-100"
-        >
-          <LogOut className="w-5 h-5" /> Leave
-        </Link>
-        <Link
-          to="/settings"
-          className="flex items-center gap-3 text-sm px-3 py-2 rounded-lg text-gray-700 hover:bg-gray-100"
-        >
-          <Settings className="w-5 h-5" /> Settings
-        </Link>
-      </nav>
-    </div>
+        <nav className="flex-1 space-y-2">
+          {menuItems.map(({ name, icon, path }) => (
+            <NavLink
+              to={path}
+              key={name}
+              onClick={onClose}
+              className={({ isActive }) =>
+                `flex items-center gap-3 px-4 py-2 rounded-lg text-sm font-medium transition-colors duration-200 hover:bg-blue-100 ${
+                  isActive ? "bg-blue-200 text-blue-800" : "text-gray-700"
+                }`
+              }
+            >
+              {icon} {name}
+            </NavLink>
+          ))}
+        </nav>
+
+        <div className="mt-8 border-t pt-4">
+          <button
+            onClick={logout}
+            className="flex items-center gap-3 px-4 py-2 text-sm font-medium text-red-600 hover:bg-red-100 rounded-lg w-full transition"
+          >
+            <LogOut size={18} /> Logout
+          </button>
+        </div>
+      </aside>
+    </>
   );
-};
-
-export default Sidebar;
+}

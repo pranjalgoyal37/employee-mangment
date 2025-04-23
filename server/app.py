@@ -72,7 +72,7 @@ def handle_stop_typing(data):
 app.register_blueprint(auth_bp, url_prefix="/api")
 app.register_blueprint(employees, url_prefix="/api")
 app.register_blueprint(tasks_bp)
-app.register_blueprint(attendance_bp)
+app.register_blueprint(attendance_bp,url_prefix="/api")
 app.register_blueprint(chat_bp, url_prefix="/api")
 
 # Run the server

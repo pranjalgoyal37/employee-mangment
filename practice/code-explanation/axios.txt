@@ -1,0 +1,42 @@
+import axios from 'axios';
+
+axios -> a promise based http client for making requset to server
+            It’s used to make GET, POST, PUT, DELETE requests and handle responses easily.
+axios.post(url,)
+
+
+axios.get("http://localhost:5000/api/login")
+.then(res => console.log(res.data))
+.catch(err => console.log(err))
+
+axios.post(url,data)
+
+
+================== axios with header ==================
+axios.get(url,header)
+
+
+token = localStorage.getItem('token)
+axios.get("http://localhost:5000/api/login",{
+    headers:{
+        Authorization = `Bearer{token}`
+    }
+})
+
+
+================== axios with await  ==================
+await axios.post()
+
+const loginUser = async (email.password) =>{
+    const res  = await axios.post("http:/localhost:5050/api/login",data)
+}
+
+
+Axios Response Object
+res  = {
+  "data": ...,        // response body
+  "status": 200,      // HTTP status
+  "statusText": "OK",
+  "headers": {...},   // response headers
+  "config": {...},    // request config
+}
